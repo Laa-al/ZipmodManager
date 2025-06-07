@@ -1,0 +1,113 @@
+@page "/fetchdata"
+@using Laaal.Models
+@using Laaal.Services
+@inject RemoteModService RemoteModService
+@inject DownloadService DownloadService
+@inject SideLoaderModService SideLoaderModService
+@inject LocalModService LocalModService
+
+<MTextField Placeholder="源地址" @bind-Value="SourceUri"></MTextField>
+<MButton OnClick="LoadAsync">读取源</MButton>
+<MTextField Placeholder="json地址" @bind-Value="JsonPath"></MTextField>
+<MButton OnClick="SaveJsonAsync">保存json</MButton>
+<MButton OnClick="LoadJsonAsync">读取json</MButton>
+
+<MTextField Placeholder="包含项目" @bind-Value="Search"></MTextField>
+<MTextField Placeholder="排除项目" @bind-Value="Exclude"></MTextField>
+<MCheckbox @bind-Value="OnlyNotDownload" Label="只查看可能未下载的Mod"></MCheckbox>
+<MButton OnClick="RefreshAsync">刷新</MButton>
+<MButton OnClick="DownloadAsync">下载所有</MButton>
+
+<MDataTable Headers="_headers" Items="_links" ResizeMode="DataTableResizeMode.Auto"
+            ItemsPerPage="20">
+</MDataTable>
+
+@code {
+    private string SourceUri { get; set; } = "https://sideload.betterrepack.com/download/AISHS2/";
+    private string JsonPath { get; set; } = "remote.json";
+    private string Search { get; set; } = string.Empty;
+    private string Exclude { get; set; } = string.Empty;
+    private bool OnlyNotDownload { get; set; }
+    private List<ZipmodLink> _links = [];
+
+    private readonly List<DataTableHeader<ZipmodLink>> _headers =
+    [
+        new() { Text = "Name", Value = nameof(ZipmodLink.Name) },
+        new() { Text = "Uri", Value = nameof(ZipmodLink.Uri) },
+        new() { Text = "Time", Value = nameof(ZipmodLink.UploadTime) },
+        new() { Text = "Size", Value = nameof(ZipmodLink.Size), Sortable = false }
+    ];
+
+    private async Task LoadAsync()
+    {
+        await SideLoaderModService.LoadLinksAsync(new Uri(SourceUri));
+    }
+
+    private async Task SaveJsonAsync()
+    {
+        await RemoteModService.SaveLinkAsJson(JsonPath);
+    }
+
+    private async Task LoadJsonAsync()
+    {
+        await RemoteModService.LoadLinkFromJson(JsonPath);
+        await RefreshAsync();
+    }
+
+    private async Task RefreshAsync()
+    {
+        var values = RemoteModService.List.Values;
+        var links = values.ToList();
+        var excluded = Exclude.Split(';').Select(u => u.Trim()).Where(u => !string.IsNullOrEmpty(u)).ToArray();
+        var included = Search.Split(';').Select(u => u.Trim()).Where(u => !string.IsNullOrEmpty(u)).ToArray();
+        links = links.Where(u =>
+        {
+            var str = u.Uri!.ToString();
+
+            if (OnlyNotDownload && u.Info is { } info)
+            {
+                if (LocalModService.List.Any(v => v.Info == info))
+                {
+                    return false;
+                }
+            }
+
+            foreach (var s in excluded)
+            {
+                if (str.Contains(s, StringComparison.InvariantCultureIgnoreCase))
+                    return false;
+            }
+
+            foreach (var s in included)
+            {
+                if (str.Contains(s, StringComparison.InvariantCultureIgnoreCase))
+                    return true;
+            }
+
+            return !included.Any();
+        }).ToList();
+        _links = links;
+        await Task.CompletedTask;
+    }
+
+
+    private void DownloadAsync()
+    {
+        foreach (var link in _links)
+        {
+            var task = new DownloadTask
+            {
+                FileName = link.Name[1..],
+                FolderPath = @"D:\Downloads\a",
+                Uri = link.Uri?.ToString(),
+                FinishedAction = async path =>
+                {
+                    await RemoteModService.OnFinishedDownloadRemote(link, path);
+                    await RemoteModService.SaveLinkAsJson("remote.json");
+                }
+            };
+            DownloadService.AutoAddTask(task);
+        }
+    }
+
+}

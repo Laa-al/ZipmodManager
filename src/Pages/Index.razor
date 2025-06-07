@@ -1,0 +1,41 @@
+@page "/"
+@using Laaal.Services
+@inject DownloadService DownloadService
+
+<MButton OnClick="StateHasChanged">Refresh</MButton>
+<MDataTable Headers="_headers" Items="DownloadService.AllTasks" 
+            ItemKey="@(r => $"{r.FolderPath}\\{r.FileName}")"
+            ItemsPerPage="20"  ResizeMode="DataTableResizeMode.Auto"/>
+
+@code
+{
+    private readonly List<DataTableHeader<DownloadTask>> _headers =
+    [
+        new()
+        {
+            Text = "FileName",
+            Align = DataTableHeaderAlign.Start,
+            Sortable = true,
+            Value = nameof(DownloadTask.FileName)
+        },
+        new()
+        {
+            Text = "FolderPath",
+            Sortable = true,
+            Value = nameof(DownloadTask.FolderPath)
+        },
+        new()
+        {
+            Text = "IsFinished",
+            Sortable = true,
+            Value = nameof(DownloadTask.IsFinished)
+        },
+        new()
+        {
+            Text = "IsStoped",
+            Sortable = true,
+            Value = nameof(DownloadTask.IsStoped)
+        },
+    ];
+
+}
