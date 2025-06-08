@@ -17,3 +17,31 @@ public static class XmlExtensions
         return element.GetFirstTagOrDefault(tagName)?.InnerText;
     }
 }
+
+public static class Utils
+{
+    public static string GetSizeString(long length)
+    {
+        var size = length;
+        var unit = "byte";
+        if (size > 1024)
+        {
+            size /= 1024;
+            unit = "K";
+        }
+
+        if (size > 1024)
+        {
+            size /= 1024;
+            unit = "M";
+        }
+
+        if (size > 1024)
+        {
+            size /= 1024;
+            unit = "G";
+        }
+
+        return $"{size}{unit}";
+    }
+}

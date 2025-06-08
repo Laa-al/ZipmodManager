@@ -1,4 +1,5 @@
 @page "/"
+@using Laaal.Models
 @using Laaal.Services
 @inject DownloadService DownloadService
 
@@ -53,7 +54,7 @@
             Sortable = true,
             Filterable = true,
             Value = nameof(DownloadTask.Size),
-            CellRender = item => (RenderFragment)(__builder => __builder.AddContent(0, $"{item.CurrentStream?.Length}/{item.Size}"))
+            CellRender = item => $"{Utils.GetSizeString(item.CurrentStream?.Length ?? 0)}/{item.Size}"
         },
         new()
         {

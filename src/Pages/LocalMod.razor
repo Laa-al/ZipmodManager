@@ -58,7 +58,8 @@
         new()
         {
             Text = "FileSize",
-            Value = nameof(ZipmodFile.FileSize)
+            Value = nameof(ZipmodFile.FileSize),
+            CellRender = item => $"{Utils.GetSizeString(item.FileSize)}"
         },
         new()
         {
