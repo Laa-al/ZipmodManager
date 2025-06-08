@@ -49,6 +49,14 @@
         },
         new()
         {
+            Text = "Size",
+            Sortable = true,
+            Filterable = true,
+            Value = nameof(DownloadTask.Size),
+            CellRender = item => (RenderFragment)(__builder => __builder.AddContent(0, $"{item.CurrentStream?.Length}/{item.Size}"))
+        },
+        new()
+        {
             Text = "IsFinished",
             Sortable = true,
             Filterable = true,

@@ -34,10 +34,10 @@
 
     private readonly List<DataTableHeader<ZipmodLink>> _headers =
     [
-        new() { Text = "Name", Value = nameof(ZipmodLink.Name) },
-        new() { Text = "Uri", Value = nameof(ZipmodLink.Uri) },
-        new() { Text = "Time", Value = nameof(ZipmodLink.UploadTime) },
-        new() { Text = "Size", Value = nameof(ZipmodLink.Size), Sortable = false }
+        new() { Text = "Name", Value = nameof(ZipmodLink.Name), Filterable = true },
+        new() { Text = "Uri", Value = nameof(ZipmodLink.Uri), Filterable = true },
+        new() { Text = "Time", Value = nameof(ZipmodLink.UploadTime), Filterable = true },
+        new() { Text = "Size", Value = nameof(ZipmodLink.Size), Filterable = true }
     ];
 
     private async Task LoadAsync()
@@ -107,6 +107,7 @@
                 FileName = link.Name[1..],
                 FolderPath = @"D:\Downloads\a",
                 Uri = link.Uri?.ToString(),
+                Size = link.Size,
                 FinishedAction = async path =>
                 {
                     await RemoteModService.OnFinishedDownloadRemote(link, path);

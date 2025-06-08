@@ -6,7 +6,6 @@ namespace Laaal.Services;
 
 public class DownloadTask
 {
-    private const int DownloadSize = 1024;
     public string? FileName { get; set; }
     public string? FolderPath { get; set; }
     public string? Uri { get; set; }
@@ -15,6 +14,9 @@ public class DownloadTask
 
     public bool IsStoped { get; set; }
     public bool IsFailed { get; set; }
+    
+    public FileStream? CurrentStream { get; set; }
+    public string? Size { get; set; }
 
     public Func<string, Task> FinishedAction { get; set; } = (str) => Task.CompletedTask;
 
@@ -50,7 +52,9 @@ public class DownloadTask
             await using (var fileStream = new FileStream(downloadPath, FileMode.Create,
                              FileAccess.Write, FileShare.Read))
             {
+                CurrentStream = fileStream;
                 await response.CopyToAsync(fileStream);
+                CurrentStream = null;
             }
 
             var path = Path.Combine(FolderPath, FileName);
