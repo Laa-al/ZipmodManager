@@ -21,10 +21,18 @@ public class ZipmodInfo
         if (rht.Version is null) return false;
         if (lft.Version is null) return true;
         if (lft.Version == rht.Version) return false;
-        System.Version.TryParse(rht.Version, out var rv);
-        if (rv is null) return false;
-        System.Version.TryParse(lft.Version, out var lv);
+        var lvs = lft.Version;
+        var rvs = rht.Version;
+        if (!TryParseVersion(rht.Version, out var rv)) return false;
+        if (!TryParseVersion(lft.Version, out var lv)) return true;
         return lv < rv;
+    }
+
+    private static bool TryParseVersion(string versionStr, out Version? version)
+    {
+        if (versionStr.StartsWith("v", StringComparison.OrdinalIgnoreCase))
+            versionStr = versionStr[1..];
+        return System.Version.TryParse(versionStr, out version);
     }
 
     public static bool operator >(ZipmodInfo lft, ZipmodInfo rht)
@@ -49,7 +57,7 @@ public class ZipmodInfo
     {
         if (Path.GetExtension(path) is not (".zip" or ".zipmod"))
             throw new Exception($"not a zip file extension {Path.GetExtension(path)}");
-        
+
         using var file = ZipFile.OpenRead(path);
         var entry = file.GetEntry("manifest.xml");
 
