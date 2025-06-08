@@ -5,6 +5,7 @@ using Serilog;
 using Serilog.Events;
 
 namespace Laaal;
+
 /// <summary>
 /// Interaction logic for MainWindow.xaml
 /// </summary>
@@ -21,7 +22,10 @@ public partial class MainWindow : Window
 #endif
             .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
             .Enrich.FromLogContext()
-            .WriteTo.Async(c => c.File("Logs/logs.txt"))
+            .WriteTo.Async(c => c.File($"Logs/{DateTime.Now.Date: yyyyMMdd}/infos.txt",
+                LogEventLevel.Information, fileSizeLimitBytes: 1024 * 1024))
+            .WriteTo.Async(c => c.File($"Logs/{DateTime.Now.Date: yyyyMMdd}/errors.txt",
+                LogEventLevel.Error, fileSizeLimitBytes: 1024 * 1024))
             .WriteTo.Async(c => c.Console())
             .CreateLogger();
 
@@ -38,7 +42,7 @@ public partial class MainWindow : Window
         serviceCollection.AddSingleton<SideLoaderModService>();
 
 #if DEBUG
-		serviceCollection.AddBlazorWebViewDeveloperTools();
+        serviceCollection.AddBlazorWebViewDeveloperTools();
 #endif
 
         Resources.Add("services", serviceCollection.BuildServiceProvider());
