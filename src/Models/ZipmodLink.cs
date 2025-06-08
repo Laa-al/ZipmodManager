@@ -13,4 +13,6 @@ public class ZipmodLink
     public DateTime UploadTime { get; set; }
 
     public ZipmodInfo? Info { get; set; }
+    
+    public bool IsInvalid { get; set; }
 }

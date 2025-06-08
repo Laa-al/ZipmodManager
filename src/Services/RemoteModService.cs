@@ -20,7 +20,10 @@ public class RemoteModService(ModAnalizeService service, ILoggerFactory factory)
             List.AddOrUpdate(link.Uri, link, (_, s) =>
             {
                 if (link.UploadTime <= s.UploadTime)
+                {
                     link.Info = s.Info;
+                    link.IsInvalid = s.IsInvalid;
+                }
                 return link;
             });
         });
@@ -79,7 +82,14 @@ public class RemoteModService(ModAnalizeService service, ILoggerFactory factory)
 
     public async Task OnFinishedDownloadRemote(ZipmodLink link, string path)
     {
-        var info = ZipmodInfo.Create(path);
-        link.Info = await service.GetOrAddInfo(info);
+        try
+        {
+            var info = ZipmodInfo.Create(path);
+            link.Info = await service.GetOrAddInfo(info);
+        }
+        catch (Exception)
+        {
+            link.IsInvalid = true;
+        }
     }
 }

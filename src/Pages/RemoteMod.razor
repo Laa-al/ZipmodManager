@@ -15,6 +15,7 @@
 <MTextField Placeholder="包含项目" @bind-Value="Search"></MTextField>
 <MTextField Placeholder="排除项目" @bind-Value="Exclude"></MTextField>
 <MCheckbox @bind-Value="OnlyNotDownload" Label="只查看可能未下载的Mod"></MCheckbox>
+<MCheckbox @bind-Value="ShowInvalidMod" Label="展示非Mod"></MCheckbox>
 <MButton OnClick="RefreshAsync">刷新</MButton>
 <MButton OnClick="DownloadAsync">下载所有</MButton>
 
@@ -28,6 +29,7 @@
     private string Search { get; set; } = string.Empty;
     private string Exclude { get; set; } = string.Empty;
     private bool OnlyNotDownload { get; set; }
+    private bool ShowInvalidMod { get; set; }
     private List<ZipmodLink> _links = [];
 
     private readonly List<DataTableHeader<ZipmodLink>> _headers =
@@ -63,6 +65,11 @@
         links = links.Where(u =>
         {
             var str = u.Uri!.ToString();
+
+            if (!ShowInvalidMod)
+            {
+                if (u.IsInvalid) return false;
+            }
 
             if (OnlyNotDownload && u.Info is { } info)
             {
