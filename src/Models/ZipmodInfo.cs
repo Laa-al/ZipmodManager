@@ -16,6 +16,22 @@ public class ZipmodInfo
     public bool IsStudioMod { get; set; }
     public bool IsMapMod { get; set; }
 
+    public static bool operator <(ZipmodInfo lft, ZipmodInfo rht)
+    {
+        if (rht.Version is null) return false;
+        if (lft.Version is null) return true;
+        if (lft.Version == rht.Version) return false;
+        System.Version.TryParse(rht.Version, out var rv);
+        if (rv is null) return false;
+        System.Version.TryParse(lft.Version, out var lv);
+        return lv < rv;
+    }
+
+    public static bool operator >(ZipmodInfo lft, ZipmodInfo rht)
+    {
+        return rht < lft;
+    }
+
     public void MapTo(ZipmodInfo res)
     {
         res.Guid = Guid;
@@ -31,6 +47,9 @@ public class ZipmodInfo
 
     public static ZipmodInfo Create(string path)
     {
+        if (Path.GetExtension(path) is not (".zip" or ".zipmod"))
+            throw new Exception($"not a zip file extension {Path.GetExtension(path)}");
+        
         using var file = ZipFile.OpenRead(path);
         var entry = file.GetEntry("manifest.xml");
 

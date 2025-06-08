@@ -148,7 +148,7 @@ public class LocalModService(ModAnalizeService service, ILoggerFactory factory)
             try
             {
                 var info = ZipmodInfo.Create(path);
-                if (VersionLargerThan(info.Version, file.Version))
+                if (info > file.Info)
                 {
                     File.Move(file.Path, path, true);
                 }
@@ -171,17 +171,6 @@ public class LocalModService(ModAnalizeService service, ILoggerFactory factory)
         file.Path = path;
 
         await Task.CompletedTask;
-    }
-
-    private static bool VersionLargerThan(string? lft, string? rht)
-    {
-        if (lft is null) return false;
-        if (rht is null) return true;
-        if (lft == rht) return false;
-        Version.TryParse(lft, out var lv);
-        if (lv is null) return false;
-        Version.TryParse(rht, out var rv);
-        return lv > rv;
     }
 
     private static string? FitPropertyToPath(string? property)

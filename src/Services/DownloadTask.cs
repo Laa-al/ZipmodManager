@@ -28,14 +28,14 @@ public class DownloadTask
 
         try
         {
+            IsStarted = true;
+            IsFinished = false;
+            IsFailed = false;
+            
             if (!Directory.Exists(FolderPath))
             {
                 Directory.CreateDirectory(FolderPath);
             }
-
-            IsStarted = true;
-            IsFinished = false;
-            IsFailed = false;
             var url = Uri!;
             //获取到文件总大小 通过head请求
             using var clientHandler = new HttpClientHandler();

@@ -2,10 +2,31 @@
 @using Laaal.Services
 @inject DownloadService DownloadService
 
+<MCard>
+    <MCardText>
+        @DownloadService.NotDownload.Count / @DownloadService.AllTasks.Count
+    </MCardText>
+</MCard>
+
 <MButton OnClick="StateHasChanged">Refresh</MButton>
-<MDataTable Headers="_headers" Items="DownloadService.AllTasks" 
+<MDataTable Headers="_headers" Items="DownloadService.AllTasks"
             ItemKey="@(r => $"{r.FolderPath}\\{r.FileName}")"
-            ItemsPerPage="20"  ResizeMode="DataTableResizeMode.Auto"/>
+            ItemsPerPage="20" ResizeMode="DataTableResizeMode.Auto">
+    <ItemColContent>
+
+        @if (context.Header.Text == "Action")
+        {
+            <MButton Disabled="@(!context.Item.IsFailed)"
+                     OnClick="@(u => DownloadService.Redownload(context.Item))">重新下载
+            </MButton>
+        }
+        else
+        {
+            @context.Value
+        }
+    </ItemColContent>
+
+</MDataTable>
 
 @code
 {
@@ -16,25 +37,32 @@
             Text = "FileName",
             Align = DataTableHeaderAlign.Start,
             Sortable = true,
+            Filterable = true,
             Value = nameof(DownloadTask.FileName)
         },
         new()
         {
             Text = "FolderPath",
             Sortable = true,
+            Filterable = true,
             Value = nameof(DownloadTask.FolderPath)
         },
         new()
         {
             Text = "IsFinished",
             Sortable = true,
+            Filterable = true,
             Value = nameof(DownloadTask.IsFinished)
         },
         new()
         {
-            Text = "IsStoped",
+            Text = "IsFailed",
             Sortable = true,
-            Value = nameof(DownloadTask.IsStoped)
+            Value = nameof(DownloadTask.IsFailed)
+        },
+        new()
+        {
+            Text = "Action",
         },
     ];
 
