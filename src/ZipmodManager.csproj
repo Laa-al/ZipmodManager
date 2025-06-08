@@ -6,6 +6,8 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <UseWPF>true</UseWPF>
         <RootNamespace>Laaal</RootNamespace>
+        <Version>1.0.0</Version>
+        <Author>Laaal</Author>
     </PropertyGroup>
 
     <ItemGroup>
