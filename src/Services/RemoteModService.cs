@@ -17,7 +17,12 @@ public class RemoteModService(ModAnalizeService service, ILoggerFactory factory)
         {
             if (link.Uri is null) return;
 
-            List.AddOrUpdate(link.Uri, link, (_, _) => link);
+            List.AddOrUpdate(link.Uri, link, (_, s) =>
+            {
+                if (link.UploadTime <= s.UploadTime)
+                    link.Info = s.Info;
+                return link;
+            });
         });
     }
 
