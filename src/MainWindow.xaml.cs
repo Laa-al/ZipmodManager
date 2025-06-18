@@ -35,6 +35,7 @@ public partial class MainWindow : Window
         serviceCollection.AddWpfBlazorWebView();
         serviceCollection.AddMasaBlazor();
 
+        serviceCollection.AddSingleton<MmdAnalyzer>();
         serviceCollection.AddSingleton<RemoteModService>();
         serviceCollection.AddSingleton<DownloadService>();
         serviceCollection.AddSingleton<LocalModService>();

@@ -110,7 +110,7 @@ public class LocalModService(ModAnalizeService service, ILoggerFactory factory)
         await Task.CompletedTask;
     }
 
-    public async Task MoveToTargetPath(string pathPrefix, string path)
+    public async Task MoveToTargetPath(string pathPrefix, string path, bool saveOld)
     {
         try
         {
@@ -121,7 +121,7 @@ public class LocalModService(ModAnalizeService service, ILoggerFactory factory)
                 var directory = FitPropertyToPath(file.Author);
                 if (string.IsNullOrWhiteSpace(directory)) directory = "unknown";
                 var filename = FitPropertyToPath(file.Guid);
-                await MoveToTargetPath(file, Path.Combine(path, directory, filename + ".zipmod"));
+                await MoveToTargetPath(file, Path.Combine(path, directory, filename + ".zipmod"), saveOld);
             }
         }
         catch (Exception e)
@@ -130,7 +130,7 @@ public class LocalModService(ModAnalizeService service, ILoggerFactory factory)
         }
     }
 
-    public async Task MoveToTargetPath(ZipmodFile file, string path)
+    public async Task MoveToTargetPath(ZipmodFile file, string path, bool saveOld)
     {
         if (!File.Exists(file.Path))
         {
@@ -150,17 +150,21 @@ public class LocalModService(ModAnalizeService service, ILoggerFactory factory)
                 var info = ZipmodInfo.Create(path);
                 if (info > file.Info)
                 {
+                    File.Move(path, path + ".cache", true);
                     File.Move(file.Path, path, true);
+                    File.Move(path + ".cache", file.Path, true);
                 }
                 else
                 {
-                    File.Delete(file.Path);
+                    if (!saveOld) File.Delete(file.Path);
                     file.Info = await service.GetOrAddInfo(info);
                 }
             }
             catch (Exception)
             {
+                File.Move(path, path + ".cache", true);
                 File.Move(file.Path, path, true);
+                File.Move(path + ".cache", file.Path, true);
             }
         }
         else

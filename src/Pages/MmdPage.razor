@@ -1,0 +1,39 @@
+﻿@page "/MmdPage"
+@using Laaal.Services
+@inject MmdAnalyzer MmdAnalyzer
+
+<MTextField Placeholder="目标路径" @bind-Value="TargetPath"/>
+<MCheckbox @bind-Value="Sorted" Label="排序"></MCheckbox>
+<MButton OnClick="GenerateList">生成list文件</MButton>
+<MButton OnClick="GenerateListForEachFolder">生成分文件夹的list文件</MButton>
+<MButton OnClick="RenameFiles">重命名各个文件</MButton>
+
+@code {
+    string TargetPath { get; set; } = string.Empty;
+    bool Sorted { get; set; } = true;
+
+    private Task GenerateList(MouseEventArgs arg)
+    {
+        MmdAnalyzer.CreateListFile(TargetPath, TargetPath, "list.txt", Sorted);
+        return Task.CompletedTask;
+    }
+
+    private Task RenameFiles(MouseEventArgs arg)
+    {
+        MmdAnalyzer.SimplyFileNames(TargetPath);
+        return Task.CompletedTask;
+    }
+
+    private Task GenerateListForEachFolder(MouseEventArgs arg)
+    {
+        var folders = Directory.GetDirectories(TargetPath);
+        foreach (var folder in folders)
+        {
+            var name = Path.GetFileName(folder);
+            MmdAnalyzer.CreateListFile(folder, TargetPath, name + ".txt", Sorted);
+        }
+
+        return Task.CompletedTask;
+    }
+
+}

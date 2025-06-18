@@ -8,6 +8,7 @@
 <MTextField Placeholder="移动到路径" @bind-Value="TargetPath"/>
 <MButton OnClick="MoveModAsync">移动mod</MButton>
 
+<MCheckbox @bind-Value="RemainOldVersion" Label="保留旧版本"></MCheckbox>
 
 <MDataTable Headers="_headers" Items="LocalModService.List" ItemKey="@(r => r.Path)"
             ItemsPerPage="20" ResizeMode="DataTableResizeMode.Auto">
@@ -17,6 +18,7 @@
     private string LocalPath { get; set; } = @"D:\Mods";
     private string LocalPathPrefix { get; set; } = @"D:\Mods";
     private string TargetPath { get; set; } = @"D:\Mods";
+    private bool RemainOldVersion { get; set; }
 
     private async Task LoadAsync()
     {
@@ -86,7 +88,7 @@
 
     private async Task MoveModAsync()
     {
-        await LocalModService.MoveToTargetPath(LocalPathPrefix, TargetPath);
+        await LocalModService.MoveToTargetPath(LocalPathPrefix, TargetPath, RemainOldVersion);
     }
 
 }
