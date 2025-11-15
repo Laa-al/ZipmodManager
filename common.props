@@ -1,0 +1,11 @@
+<Project>
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <RootNamespace>Zmm</RootNamespace>
+        <LangVersion>latest</LangVersion>
+        <Version>0.1.0</Version>
+        <NoWarn>$(NoWarn);CS1591;CS0436</NoWarn>
+        <AbpVersion>9.3.6</AbpVersion>
+    </PropertyGroup>
+</Project>

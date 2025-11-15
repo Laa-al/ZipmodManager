@@ -1,0 +1,20 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Zmm.Domain/Zmm.Domain.csproj" />
+    <Project Path="src/Zmm.Blazor/Zmm.Blazor.csproj" />
+    <Project Path="src/Zmm.Domain.Shared/Zmm.Domain.Shared.csproj" />
+    <Project Path="src/Zmm.Application/Zmm.Application.csproj" />
+    <Project Path="src/Zmm.Application.Contracts/Zmm.Application.Contracts.csproj" />
+    <Project Path="src/Zmm.EntityFrameworkCore/Zmm.EntityFrameworkCore.csproj" />
+    <Project Path="src/Zmm.Installer/Zmm.Installer.csproj" />
+    <Project Path="src/Zmm/Zmm.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/Zmm.Application.Tests/Zmm.Application.Tests.csproj" />
+    <Project Path="test/Zmm.Domain.Tests/Zmm.Domain.Tests.csproj" />
+    <Project Path="test/Zmm.EntityFrameworkCore.Tests/Zmm.EntityFrameworkCore.Tests.csproj" />
+    <Project Path="test/Zmm.TestBase/Zmm.TestBase.csproj" />
+  </Folder>
+</Solution>

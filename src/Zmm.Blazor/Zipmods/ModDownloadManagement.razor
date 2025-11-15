@@ -1,0 +1,78 @@
+@page "/mod-download-management"
+@namespace Zmm.Zipmods
+@using Zmm.Downloads
+@inherits ZmmComponentBase
+<MCard>
+    <MCardTitle>
+        模组下载管理
+    </MCardTitle>
+    <MCardSubtitle>
+        <MRow>
+            <MCol Cols="6">
+                <MTextField @bind-Value="RequestInput.Path" Label="路径"/>
+            </MCol>
+            <MCol Cols="6">
+                <MSelect @bind-Value="RequestInput.Status"
+                         Items="@(Enum.GetValues<DownloadStatus>())"
+                         ItemText="@(u => u switch
+                                   {
+                                       DownloadStatus.Wait => "等待中",
+                                       DownloadStatus.Downloading => "下载中",
+                                       DownloadStatus.Downloaded => "已完成",
+                                       DownloadStatus.Canceled => "已取消",
+                                       DownloadStatus.Paused => "已暂停",
+                                       DownloadStatus.Failed => "失败",
+                                       _ => throw new ArgumentOutOfRangeException(nameof(u), u, null)
+                                   })"
+                         ItemValue="u => u"
+                         Label="状态"
+                         Clearable>
+                </MSelect>
+            </MCol>
+        </MRow>
+    </MCardSubtitle>
+    <MCardActions>
+        <MButton OnClick="RefreshAsync">
+            搜索
+        </MButton>
+        <MButton OnClick="ResetAsync">
+            重置
+        </MButton>
+    </MCardActions>
+    <MCardText>
+        @Summary.CountInQueue / @Summary.TotalCount
+    </MCardText>
+    <MCardText>
+
+        <MDataTable
+            TItem="ModDownloadDto"
+            Headers="@Headers"
+            Items="@Result.Items"
+            Page="@CurrentPage"
+            ItemsPerPage="@RequestInput.MaxResultCount"
+            OnOptionsUpdate="@GetEntitiesAsync"
+            ServerItemsLength="@((int)Result.TotalCount)"
+            Loading="IsLoading"
+            ResizeMode="DataTableResizeMode.Auto">
+            <ItemColContent>
+
+                @if (context.Header.Text == "Action")
+                {
+                    if (context.Item.Status != DownloadStatus.Downloading && 
+                        context.Item.Status != DownloadStatus.Wait)
+                    {
+                        <MButton OnClick="@(u => RedownloadModAsync(context.Item))">
+                            重新下载
+                        </MButton>
+                    }
+                }
+                else
+                {
+                    @context.Value
+                }
+            </ItemColContent>
+
+        </MDataTable>
+
+    </MCardText>
+</MCard>

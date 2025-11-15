@@ -1,0 +1,54 @@
+{
+  "folders": {
+    "items": {
+      "src": {},
+      "test": {}
+    }
+  },
+  "packages": {
+    "Zmm.Domain": {
+      "path": "src/Zmm.Domain/Zmm.Domain.abppkg",
+      "folder": "src"
+    },
+    "Zmm.Application.Contracts": {
+      "path": "src/Zmm.Application.Contracts/Zmm.Application.Contracts.abppkg",
+      "folder": "src"
+    },
+    "Zmm.Application": {
+      "path": "src/Zmm.Application/Zmm.Application.abppkg",
+      "folder": "src"
+    },
+    "Zmm.EntityFrameworkCore": {
+      "path": "src/Zmm.EntityFrameworkCore/Zmm.EntityFrameworkCore.abppkg",
+      "folder": "src"
+    },
+    "Zmm.Blazor": {
+      "path": "src/Zmm.Blazor/Zmm.Blazor.abppkg",
+      "folder": "src"
+    },
+    "Zmm.TestBase": {
+      "path": "test/Zmm.TestBase/Zmm.TestBase.abppkg",
+      "folder": "test"
+    },
+    "Zmm.EntityFrameworkCore.Tests": {
+      "path": "test/Zmm.EntityFrameworkCore.Tests/Zmm.EntityFrameworkCore.Tests.abppkg",
+      "folder": "test"
+    },
+    "Zmm.Domain.Tests": {
+      "path": "test/Zmm.Domain.Tests/Zmm.Domain.Tests.abppkg",
+      "folder": "test"
+    },
+    "Zmm.Application.Tests": {
+      "path": "test/Zmm.Application.Tests/Zmm.Application.Tests.abppkg",
+      "folder": "test"
+    },
+    "Zmm.Domain.Shared": {
+      "path": "src/Zmm.Domain.Shared/Zmm.Domain.Shared.abppkg",
+      "folder": "src"
+    },
+    "Zmm.Installer": {
+       "path": "src/Zmm.Installer/Zmm.Installer.abppkg",
+       "folder": "src"
+    }
+  }
+}

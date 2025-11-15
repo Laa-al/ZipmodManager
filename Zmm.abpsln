@@ -1,0 +1,9 @@
+{
+  "id": "c9aa0f7e-7e36-4e97-b239-9f7ff267a550",
+  "template": "empty",
+  "modules": {
+    "Zmm": {
+      "path": "Zmm.abpmdl"
+    }
+  }
+}

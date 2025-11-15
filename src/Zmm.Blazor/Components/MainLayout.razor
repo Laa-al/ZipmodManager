@@ -1,0 +1,48 @@
+﻿@inherits LayoutComponentBase
+
+<MApp>
+    <MAppBar App>
+        <MAppBarNavIcon @onclick="() => _drawer = !_drawer"></MAppBarNavIcon>
+        <MToolbarTitle>ZMM</MToolbarTitle>
+        <MSpacer></MSpacer>
+    </MAppBar>
+
+    <MNavigationDrawer App @bind-Value="_drawer">
+        <MList Nav Routable>
+            @GenerateMenu("首页", "/", "mdi-home")
+            @GenerateMenu("本地模组管理", "/local-mod-management", "mdi-plus")
+            @GenerateMenu("远程模组管理", "/remote-mod-management", "mdi-list-box")
+            @GenerateMenu("模组下载管理", "/mod-download-management", "mdi-list-box")
+            @GenerateMenu("MMD 管理", "/mmd-list-management", "mdi-list-box")
+        </MList>
+    </MNavigationDrawer>
+
+    <MMain>
+        <MContainer Fluid>
+            <MErrorHandler>
+                @Body
+            </MErrorHandler>
+        </MContainer>
+    </MMain>
+</MApp>
+
+@code {
+
+    private bool? _drawer;
+
+    protected RenderFragment GenerateMenu(string name, string uri, string? icon = null)
+    {
+        return @<MListItem Href="@uri">
+                   @if (icon is not null)
+                   {
+                       <MListItemIcon>
+                           <MIcon>@icon</MIcon>
+                       </MListItemIcon>
+                   }
+                   <MListItemContent>
+                       <MListItemTitle>@name</MListItemTitle>
+                   </MListItemContent>
+               </MListItem>;
+    }
+
+}

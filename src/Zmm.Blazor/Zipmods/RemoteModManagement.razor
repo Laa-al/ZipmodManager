@@ -1,0 +1,90 @@
+@page "/remote-mod-management"
+@namespace Zmm.Zipmods
+@inherits ZmmComponentBase
+
+<MCard>
+    <MCardTitle>
+        远程模组服务
+    </MCardTitle>
+    <MCardSubtitle>
+        <MRow>
+            <MCol Cols="6">
+                <MTextField @bind-Value="RequestInput.Name" Label="网址"/>
+            </MCol>
+            <MCol Cols="6">
+                <MTextField @bind-Value="RequestInput.Identifier" Label="名称"/>
+            </MCol>
+        </MRow>
+        <MRow>
+            <MCol Cols="6">
+                <MTextField @bind-Value="RequestInput.Version" Label="版本"/>
+            </MCol>
+            <MCol Cols="6">
+                <MTextField @bind-Value="RequestInput.Author" Label="作者"/>
+            </MCol>
+        </MRow>
+    </MCardSubtitle>
+    <MCardActions>
+        <MButton OnClick="RefreshAsync">
+            搜索
+        </MButton>
+        <MButton OnClick="ResetAsync">
+            重置
+        </MButton>
+        <PModal Persistent
+                Title="加载SideLoader"
+                Width="500"
+                OnSave="LoadRemoteModsAsync">
+            <ActivatorContent>
+                <MButton @attributes="@context.Attrs">加载SideLoader</MButton>
+            </ActivatorContent>
+            <ChildContent>
+                <MCol Cols="12">
+                    <MTextField @bind-Value="RemoteUrl"
+                                Label="SideLoader地址"
+                                Dense
+                                Outlined
+                                HideDetails="@("auto")"/>
+                </MCol>
+            </ChildContent>
+        </PModal>
+
+        <MButton OnClick="DownloadModsAsync">
+            下载筛选的模组
+        </MButton>
+        <MButton OnClick="ImportModsFromJsonAsync">
+            导入Json
+        </MButton>
+        <MButton OnClick="ExportModsToJsonAsync">
+            导出Json
+        </MButton>
+    </MCardActions>
+    <MCardText>
+
+        <MDataTable
+            TItem="ZipmodLinkDto"
+            Headers="@Headers"
+            Items="@Result.Items"
+            Page="@CurrentPage"
+            ItemsPerPage="@RequestInput.MaxResultCount"
+            OnOptionsUpdate="@GetEntitiesAsync"
+            ServerItemsLength="@((int)Result.TotalCount)"
+            Loading="IsLoading"
+            ResizeMode="DataTableResizeMode.Auto">
+
+            <ItemColContent>
+
+                @if (context.Header.Text == "Action")
+                {
+                    <MButton OnClick="@(u => DownloadModAsync(context.Item))">
+                        下载
+                    </MButton>
+                }
+                else
+                {
+                    @context.Value
+                }
+            </ItemColContent>
+        </MDataTable>
+    </MCardText>
+</MCard>

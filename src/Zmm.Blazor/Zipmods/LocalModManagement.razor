@@ -1,0 +1,74 @@
+@page "/local-mod-management"
+@namespace Zmm.Zipmods
+@inherits ZmmComponentBase
+
+<MCard>
+    <MCardTitle>
+        本地模组管理
+    </MCardTitle>
+    <MCardSubtitle>
+        <MRow>
+            <MCol Cols="6">
+                <MTextField @bind-Value="RequestInput.Path" Label="路径"/>
+            </MCol>
+            <MCol Cols="6">
+                <MTextField @bind-Value="RequestInput.Identifier" Label="名称"/>
+            </MCol>
+        </MRow>
+        <MRow>
+            <MCol Cols="6">
+                <MTextField @bind-Value="RequestInput.Version" Label="版本"/>
+            </MCol>
+            <MCol Cols="6">
+                <MTextField @bind-Value="RequestInput.Author" Label="作者"/>
+            </MCol>
+        </MRow>
+    </MCardSubtitle>
+    <MCardActions>
+        <MButton OnClick="RefreshAsync">
+            搜索
+        </MButton>
+        <MButton OnClick="ResetAsync">
+            重置
+        </MButton>
+        <MButton OnClick="LoadLocalModsAsync">
+            加载模组
+        </MButton>
+        <MButton OnClick="MoveLocalModsAsync">
+            移动模组
+        </MButton>
+    </MCardActions>
+    <MCardText>
+        <MDataTable
+            TItem="ZipmodFileDto"
+            Headers="@Headers"
+            Items="@Result.Items"
+            Page="@CurrentPage"
+            ItemsPerPage="@RequestInput.MaxResultCount"
+            OnOptionsUpdate="@GetEntitiesAsync"
+            ServerItemsLength="@((int)Result.TotalCount)"
+            Loading="IsLoading"
+            ResizeMode="DataTableResizeMode.Auto">
+
+            <ItemColContent>
+
+                @if (context.Header.Text == "Action")
+                {
+                    <PModal Title="删除模组" Width="500"
+                            OnSave="@(u => DeleteModAsync(context.Item))">
+                        <ActivatorContent Context="act">
+                            <MButton @attributes="@act.Attrs">删除</MButton>
+                        </ActivatorContent>
+                        <ChildContent>
+                            确认删除？
+                        </ChildContent>
+                    </PModal>
+                }
+                else
+                {
+                    @context.Value
+                }
+            </ItemColContent>
+        </MDataTable>
+    </MCardText>
+</MCard>

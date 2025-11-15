@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\common.props" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Zmm.Application\Zmm.Application.csproj" />
+    <ProjectReference Include="..\Zmm.Domain.Tests\Zmm.Domain.Tests.csproj" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\..\common.props" />
+  <ItemGroup>
+    <ProjectReference Include="..\Zmm.Domain\Zmm.Domain.csproj" />
+    <PackageReference Include="Volo.Abp.EntityFrameworkCore" Version="$(AbpVersion)" />
+    <PackageReference Include="Volo.Abp.BackgroundJobs.EntityFrameworkCore" Version="$(AbpVersion)" />
+  </ItemGroup>
+</Project>

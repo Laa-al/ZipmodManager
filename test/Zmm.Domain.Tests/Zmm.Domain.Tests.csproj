@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\common.props" />
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Zmm.Domain\Zmm.Domain.csproj" />
+    <ProjectReference Include="..\Zmm.EntityFrameworkCore.Tests\Zmm.EntityFrameworkCore.Tests.csproj" />
+  </ItemGroup>
+
+
+</Project>

@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <Import Project="..\..\common.props"/>
+
+  <ItemGroup>
+    <PackageReference Include="Masa.Blazor" Version="1.11.2" />
+    <PackageReference Include="Volo.Abp.AutoMapper" Version="$(AbpVersion)" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Components" Version="$(AbpVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Zmm.Application.Contracts\Zmm.Application.Contracts.csproj"/>
+  </ItemGroup>
+</Project>
