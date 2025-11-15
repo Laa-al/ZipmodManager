@@ -143,18 +143,17 @@ public class ZipmodManager(
             return;
         }
 
+        var cachePath = Path.Combine(
+            options.Value.CacheModPath,
+            targetFile.Info.GetRelativePathWithVersion());
+
         if (file.Info.CompareTo(targetFile.Info) > 0)
         {
-            var cachePath = Path.Combine(
-                options.Value.CacheModPath,
-                targetFile.Info.GetRelativePathWithVersion());
             targetFile.MoveToPath(cachePath);
         }
         else
         {
-            path = Path.Combine(
-                options.Value.CacheModPath,
-                file.Info.GetRelativePathWithVersion());
+            path = cachePath;
         }
 
         await MoveFileDirectlyAsync(file, path);

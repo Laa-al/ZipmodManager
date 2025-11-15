@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Volo.Abp.BackgroundJobs;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Domain.Repositories;
+using Volo.Abp.Uow;
 
 namespace Zmm.Zipmods;
 
@@ -29,24 +30,29 @@ public class LinkToJsonHandleJob(
         {
             await using var fs = new FileStream(args.Path, FileMode.Open);
             var list = JsonSerializer.Deserialize<List<ZipmodLink>>(fs);
-            foreach (var zipmodLink in list!)
+            if (list is not null)
             {
-                if (zipmodLink.Info is { } i)
+                foreach (var link in list)
                 {
-                    var exist = await infoRepository.FirstOrDefaultAsync(u =>
-                        u.Identifier == i.Identifier && u.Version == i.Version && u.Author == i.Author);
-                    if (exist is not null)
-                    {
-                        zipmodLink.Info = exist;
-                    }
-                    else
-                    {
-                        await infoRepository.InsertAsync(i);
-                    }
+                    await CreateLinkAsync(link);
                 }
-
-                await repository.InsertAsync(zipmodLink, true);
             }
         }
+    }
+
+    [UnitOfWork]
+    protected virtual async Task CreateLinkAsync(ZipmodLink link)
+    {
+        if (link.Info is { } i)
+        {
+            var exist = await infoRepository.FirstOrDefaultAsync(u =>
+                u.Identifier == i.Identifier && u.Version == i.Version && u.Author == i.Author);
+            if (exist is not null)
+            {
+                link.Info = exist;
+            }
+        }
+
+        await repository.InsertAsync(link);
     }
 }
