@@ -14,5 +14,18 @@ public class ZipmodLinkRequestInput : ZipmodInfoRequestInput
     public DateTime? UploadTimeStrat { get; set; }
     public DateTime? UploadTimeEnd { get; set; }
 
+    public bool? IsDownload { get; set; }
     public bool? IsInvalid { get; set; }
+
+    public override void Clear()
+    {
+        base.Clear();
+        Name = null;
+        Description = null;
+        Size = null;
+        UploadTimeStrat = null;
+        UploadTimeEnd = null;
+        IsDownload = null;
+        IsInvalid = null;
+    }
 }

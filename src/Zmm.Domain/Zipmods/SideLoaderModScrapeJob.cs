@@ -15,7 +15,7 @@ namespace Zmm.Zipmods;
 
 public class SideLoaderModScrapeJob(
     IGuidGenerator generator,
-    IRepository<ZipmodLink, Guid> linkRepository)
+    ZipmodManager manager)
     : AsyncBackgroundJob<SideLoaderModScrapeArgs>, ITransientDependency
 {
     public override async Task ExecuteAsync(SideLoaderModScrapeArgs args)
@@ -95,18 +95,12 @@ public class SideLoaderModScrapeJob(
                     }
 
                     if (skip) continue;
-
-                    var entity = await linkRepository.FindAsync(u => u.DownloadUri == linkUri);
-                    if (entity is null)
+                    await manager.CreateLinkAsync(new ZipmodLink(generator.Create(), linkUri)
                     {
-                        entity = new ZipmodLink(generator.Create(), linkUri)
-                        {
-                            Name = HttpUtility.HtmlDecode(linkName),
-                            UploadTime = uploadTime,
-                            Size = linkSize
-                        };
-                        await linkRepository.InsertAsync(entity);
-                    }
+                        Name = HttpUtility.HtmlDecode(linkName),
+                        UploadTime = uploadTime,
+                        Size = linkSize
+                    });
                 }
             }
             catch (Exception e)

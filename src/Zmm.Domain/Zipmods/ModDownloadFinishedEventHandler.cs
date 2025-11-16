@@ -12,21 +12,19 @@ namespace Zmm.Zipmods;
 
 public class ModDownloadFinishedEventHandler(
     IRepository<ZipmodLink, Guid> linkRepository,
-    DownloadManager downloadManager,
     ZipmodManager zipmodManager)
     : ILocalEventHandler<DownloadFinishedEto>, ITransientDependency
 {
     public async Task HandleEventAsync(DownloadFinishedEto eventData)
     {
-        var task = downloadManager.GetOrDefault(eventData.Id);
-        if (task is not { Label: "zipmod" }) return;
+        if (eventData is not { Label: "zipmod" } task) return;
 
         if (eventData.StatusCode is HttpStatusCode.BadRequest or HttpStatusCode.NotFound)
         {
             await DeleteInvalidLinkAsync(task);
             return;
         }
-
+        
         try
         {
             var link = await linkRepository.FindAsync(u => u.DownloadUri == task.Uri);
@@ -54,7 +52,7 @@ public class ModDownloadFinishedEventHandler(
     }
 
     [UnitOfWork]
-    protected virtual async Task DeleteInvalidLinkAsync(DownloadTask task)
+    protected virtual async Task DeleteInvalidLinkAsync(IDownloadTask task)
     {
         var link = await linkRepository.FindAsync(u => u.DownloadUri == task.Uri);
 

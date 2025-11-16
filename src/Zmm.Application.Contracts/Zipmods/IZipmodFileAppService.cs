@@ -8,5 +8,5 @@ public interface IZipmodFileAppService : ICrudAppService<ZipmodFileDto, Guid, Zi
 {
     Task LoadLocalModsAsync(string folderPath);
     Task MoveLocalModsAsync(ZipmodFileRequestInput input, string folderPath);
-    Task DeleteModAsync(Guid id);
+    Task DeleteModAsync(ZipmodFileRequestInput input);
 }

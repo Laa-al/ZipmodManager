@@ -20,22 +20,19 @@ public class ZipmodInfo : AggregateRoot<Guid>, IZipmodInfo
         Links = [];
     }
 
-    [MaxLength(128)]
-    public string Identifier { get; set; } = string.Empty;
+    [MaxLength(128)] public string Identifier { get; set; } = string.Empty;
 
-    [MaxLength(64)]
-    public string? Version { get; set; }
+    [MaxLength(64)] public string? Version { get; set; }
 
-    [MaxLength(64)]
-    public string? Author { get; set; }
+    [MaxLength(64)] public string? Author { get; set; }
 
-    [MaxLength(64)]
-    public string? Game { get; set; }
+    [MaxLength(64)] public string? Game { get; set; }
 
     public bool IsCharaMod { get; set; }
     public bool IsStudioMod { get; set; }
     public bool IsMapMod { get; set; }
     public long FileSize { get; set; }
+    public string Content { get; set; } = string.Empty;
     public DateTime UpdateTime { get; set; }
     public virtual List<ZipmodFile> Files { get; set; } = null!;
     public virtual List<ZipmodLink> Links { get; set; } = null!;

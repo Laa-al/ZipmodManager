@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using Microsoft.Extensions.Options;
@@ -38,6 +39,21 @@ public class ZipmodManager(
         if (root is null) throw new Exception("mainfest.xml is empty");
         var identifier = root.GetFirstTagTextOrDefault("guid");
         if (identifier is null) throw new Exception("entry does not has guid");
+        string content;
+        {
+            var sb = new StringBuilder();
+            var csvs = file.Entries.Where(u => u.Name.EndsWith(".csv"));
+            foreach (var csv in csvs)
+            {
+                await using var s = csv.Open();
+                using var sr = new StreamReader(s);
+                var str = await sr.ReadToEndAsync();
+                sb.Append(str);
+                sb.Append("\r\n");
+            }
+
+            content = sb.ToString();
+        }
 
         FileInfo fileInfo = new(path);
         ZipmodInfo res = new(generator.Create())
@@ -50,7 +66,9 @@ public class ZipmodManager(
             IsMapMod = file.GetEntry("abdata/map/") is not null,
             FileSize = fileInfo.Length,
             UpdateTime = fileInfo.LastWriteTime,
+            Content = content
         };
+
 
         foreach (XmlNode node in root.GetElementsByTagName("game"))
         {
@@ -74,6 +92,7 @@ public class ZipmodManager(
             exist.IsMapMod = res.IsMapMod;
             exist.FileSize = res.FileSize;
             exist.UpdateTime = res.UpdateTime;
+            exist.Content = res.Content;
 
             return exist;
         }
@@ -103,11 +122,33 @@ public class ZipmodManager(
     }
 
     [UnitOfWork]
-    public virtual async Task MoveFilesToPathAsync(List<Guid> ids, string folderPath)
+    public virtual async Task CreateLinkAsync(ZipmodLink link)
     {
-        foreach (var id in ids)
+        if (link.Info is not null)
         {
-            await MoveFileToPathAsync(id, folderPath);
+            var info = await infoRepository.FirstOrDefaultAsync(u =>
+                u.Identifier == link.Info.Identifier && u.Version == link.Info.Version && u.Author == link.Info.Author);
+
+            if (info is not null)
+            {
+                link.Info = info;
+            }
+        }
+
+
+        var entity = await linkRepository.FindAsync(u => u.DownloadUri == link.DownloadUri);
+        if (entity is null)
+        {
+            await linkRepository.InsertAsync(link);
+        }
+        else
+        {
+            entity.IsInvalid = link.IsInvalid;
+            entity.UploadTime = link.UploadTime;
+            entity.Description = link.Description;
+            entity.Name = link.Name;
+            entity.Size = link.Size;
+            entity.Info = link.Info;
         }
     }
 
@@ -121,11 +162,6 @@ public class ZipmodManager(
             await fileRepository.DeleteAsync(file);
             return;
         }
-
-        var directory = Path.GetDirectoryName(path)!;
-
-        if (!Directory.Exists(directory))
-            Directory.CreateDirectory(directory);
 
         if (!File.Exists(path))
         {
@@ -171,7 +207,6 @@ public class ZipmodManager(
         }
     }
 
-    [UnitOfWork]
     public virtual async Task DeleteFileAsync(ZipmodFile file)
     {
         await fileRepository.DeleteAsync(file);

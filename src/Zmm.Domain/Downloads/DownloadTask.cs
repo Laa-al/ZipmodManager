@@ -2,7 +2,7 @@
 
 namespace Zmm.Downloads;
 
-public class DownloadTask
+public class DownloadTask:IDownloadTask
 {
     public Guid Id { get; set; }
     public required string Label { get; set; }

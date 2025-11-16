@@ -11,5 +11,6 @@ public class ZmmApplicationAutoMapperProfile : Profile
         CreateMap<ZipmodInfo, ZipmodInfoDto>().ReverseMap();
         CreateMap<ZipmodLink, ZipmodLinkDto>().ReverseMap();
         CreateMap<ZipmodLinkRequestInput, ModDownloadArgs>().ReverseMap();
+        CreateMap<ZipmodFileRequestInput, ModMoveArgs>().ReverseMap();
     }
 }

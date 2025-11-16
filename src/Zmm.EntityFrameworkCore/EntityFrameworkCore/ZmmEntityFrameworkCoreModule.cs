@@ -32,13 +32,18 @@ public class ZmmEntityFrameworkCoreModule : AbpModule
             {
                 e.DefaultWithDetailsFunc = q => q
                         .Include(v => v.Info)
-                        .ThenInclude(u => u!.Files)
+                        .ThenInclude(v => v!.Files)
+                        .Include(v => v.Info)
+                        .ThenInclude(v => v!.Links)
                     ;
             });
             o.Entity<ZipmodFile>(e =>
             {
                 e.DefaultWithDetailsFunc = q => q
                         .Include(v => v.Info)
+                        .ThenInclude(v => v.Files)
+                        .Include(v => v.Info)
+                        .ThenInclude(v => v.Links)
                     ;
             });
             o.Entity<ZipmodInfo>(e =>

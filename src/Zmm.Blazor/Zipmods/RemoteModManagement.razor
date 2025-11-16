@@ -1,5 +1,6 @@
 @page "/remote-mod-management"
 @namespace Zmm.Zipmods
+@using Zmm.Components
 @inherits ZmmComponentBase
 
 <MCard>
@@ -9,18 +10,37 @@
     <MCardSubtitle>
         <MRow>
             <MCol Cols="6">
-                <MTextField @bind-Value="RequestInput.Name" Label="网址"/>
+                <MTextField Clearable @bind-Value="RequestInput.Name" Label="网址"/>
             </MCol>
             <MCol Cols="6">
-                <MTextField @bind-Value="RequestInput.Identifier" Label="名称"/>
+                <MTextField Clearable @bind-Value="RequestInput.Identifier" Label="名称"/>
             </MCol>
         </MRow>
         <MRow>
             <MCol Cols="6">
-                <MTextField @bind-Value="RequestInput.Version" Label="版本"/>
+                <MTextField Clearable @bind-Value="RequestInput.Version" Label="版本"/>
             </MCol>
             <MCol Cols="6">
-                <MTextField @bind-Value="RequestInput.Author" Label="作者"/>
+                <MTextField Clearable @bind-Value="RequestInput.Author" Label="作者"/>
+            </MCol>
+        </MRow>
+        <MRow>
+            <MCol Cols="12">
+                <MTextField Clearable @bind-Value="RequestInput.Content" Label="内容"/>
+            </MCol>
+        </MRow>
+        <MRow>
+            <MCol Cols="3">
+                <BoolSelect @bind-Value="RequestInput.IsStudioMod" Label="工作室"/>
+            </MCol>
+            <MCol Cols="3">
+                <BoolSelect @bind-Value="RequestInput.IsCharaMod" Label="人物"/>
+            </MCol>
+            <MCol Cols="3">
+                <BoolSelect @bind-Value="RequestInput.IsMapMod" Label="地图"/>
+            </MCol>
+            <MCol Cols="3">
+                <BoolSelect @bind-Value="RequestInput.IsDownload" Label="已下载"/>
             </MCol>
         </MRow>
     </MCardSubtitle>
@@ -66,6 +86,8 @@
             Headers="@Headers"
             Items="@Result.Items"
             Page="@CurrentPage"
+            ShowExpand
+            ItemKey="u => u.Id.ToString()"
             ItemsPerPage="@RequestInput.MaxResultCount"
             OnOptionsUpdate="@GetEntitiesAsync"
             ServerItemsLength="@((int)Result.TotalCount)"
@@ -80,11 +102,22 @@
                         下载
                     </MButton>
                 }
-                else
+                else if (context.Value is not null)
                 {
                     @context.Value
                 }
+                else
+                {
+                    @context.ValueContent
+                }
             </ItemColContent>
+            <ExpandedItemContent>
+                <td colspan="@Headers.Count">
+                    <pre>
+                        @context.Item.Info?.Content
+                    </pre>
+                </td>
+            </ExpandedItemContent>
         </MDataTable>
     </MCardText>
 </MCard>

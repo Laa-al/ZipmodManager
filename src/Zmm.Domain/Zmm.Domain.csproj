@@ -9,7 +9,4 @@
     <PackageReference Include="Volo.Abp.BackgroundJobs" Version="$(AbpVersion)" />
     <PackageReference Include="Volo.Abp.BackgroundJobs.Domain" Version="$(AbpVersion)" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Mmds\" />
-  </ItemGroup>
 </Project>

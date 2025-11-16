@@ -27,6 +27,11 @@ public class ZipmodFile : AggregateRoot<Guid>, IZipmodFile
     {
         if (File.Exists(Path))
         {
+            var directory = System.IO.Path.GetDirectoryName(path)!;
+
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
+            
             File.Move(Path, path, true);
             Path = path;
             return true;

@@ -9,29 +9,29 @@ using Volo.Abp.Uow;
 
 namespace Zmm.Zipmods;
 
-public class ModDownloadJob(
-    IRepository<ZipmodLink, Guid> repository,
+public class ModMoveJob(
+    IRepository<ZipmodFile, Guid> repository,
     ZipmodManager zipmodManager
 )
-    : AsyncBackgroundJob<ModDownloadArgs>, ITransientDependency
+    : AsyncBackgroundJob<ModMoveArgs>, ITransientDependency
 {
-    public override async Task ExecuteAsync(ModDownloadArgs input)
+    public override async Task ExecuteAsync(ModMoveArgs input)
     {
         var list = await GetIdListAsync(input);
         foreach (var id in list)
         {
-            await zipmodManager.DownloadModAsync(id, input.Path, true);
+            await zipmodManager.MoveFileToPathAsync(id, input.TargetPath);
         }
     }
 
     [UnitOfWork]
-    protected virtual async Task<List<Guid>> GetIdListAsync(ModDownloadArgs input)
+    protected virtual async Task<List<Guid>> GetIdListAsync(ModMoveArgs input)
     {
         var query = await repository.WithDetailsAsync();
 
         query = query.Filter(input)
-                .Where(u => !u.IsInvalid)
             ;
+
         return query.Select(u => u.Id).ToList();
     }
 }

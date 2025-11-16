@@ -1,0 +1,27 @@
+﻿<MSelect Clearable
+         Items="Items"
+         Value="Value"
+         ValueChanged="ValueChanged"
+         ItemText="GetText"
+         ItemValue="b => b"
+         Label="@Label"/>
+
+
+
+@code {
+    private static readonly bool?[] Items = [null, true, false];
+
+    [Parameter] public bool? Value { get; set; }
+    [Parameter] public EventCallback<bool?> ValueChanged { get; set; }
+    [Parameter] public string? Label { get; set; }
+
+    private string GetText(bool? b)
+    {
+        return b switch
+        {
+            true => "是",
+            false => "否",
+            null => "-"
+        };
+    }
+}

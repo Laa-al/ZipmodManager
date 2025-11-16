@@ -12,11 +12,9 @@ namespace Zmm.Zipmods;
 
 public partial class LocalModManagement
 {
-    [Inject]
-    protected IZipmodFileAppService AppService { get; set; } = null!;
+    [Inject] protected IZipmodFileAppService AppService { get; set; } = null!;
 
-    [Inject]
-    protected IExplorerManager ExplorerManager { get; set; } = null!;
+    [Inject] protected IExplorerManager ExplorerManager { get; set; } = null!;
 
     protected PagedResultDto<ZipmodFileDto> Result { get; set; } = new();
 
@@ -68,11 +66,29 @@ public partial class LocalModManagement
         }
     }
 
-    protected async Task DeleteModAsync(ZipmodFileDto dto)
+    private bool _deleteModalVisible;
+    private ZipmodFileDto? _fileDto;
+
+    protected void OpenDeleteModal(ZipmodFileDto? file)
+    {
+        _fileDto = file;
+        _deleteModalVisible = true;
+    }
+
+    protected async Task DeleteModAsync()
     {
         try
         {
-            await AppService.DeleteModAsync(dto.Id);
+            var input = new ZipmodFileRequestInput();
+            input = ObjectMapper.Map(RequestInput, input);
+            if (_fileDto is not null)
+            {
+                input.Path = _fileDto.Path;
+            }
+
+            await AppService.DeleteModAsync(input);
+            await GetEntitiesAsync(null);
+            _deleteModalVisible = false;
         }
         catch (Exception e)
         {
@@ -87,10 +103,7 @@ public partial class LocalModManagement
 
     protected async Task ResetAsync()
     {
-        RequestInput.Path = null;
-        RequestInput.Identifier = null;
-        RequestInput.Version = null;
-        RequestInput.Author = null;
+        RequestInput.Clear();
         await GetEntitiesAsync(null);
     }
 

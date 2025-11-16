@@ -1,5 +1,6 @@
 @page "/local-mod-management"
 @namespace Zmm.Zipmods
+@using Zmm.Components
 @inherits ZmmComponentBase
 
 <MCard>
@@ -9,18 +10,42 @@
     <MCardSubtitle>
         <MRow>
             <MCol Cols="6">
-                <MTextField @bind-Value="RequestInput.Path" Label="路径"/>
+                <MTextField Clearable @bind-Value="RequestInput.Path" Label="路径"/>
             </MCol>
             <MCol Cols="6">
-                <MTextField @bind-Value="RequestInput.Identifier" Label="名称"/>
+                <MTextField Clearable @bind-Value="RequestInput.Identifier" Label="名称"/>
             </MCol>
         </MRow>
         <MRow>
             <MCol Cols="6">
-                <MTextField @bind-Value="RequestInput.Version" Label="版本"/>
+                <MTextField Clearable @bind-Value="RequestInput.Version" Label="版本"/>
             </MCol>
             <MCol Cols="6">
-                <MTextField @bind-Value="RequestInput.Author" Label="作者"/>
+                <MTextField Clearable @bind-Value="RequestInput.Author" Label="作者"/>
+            </MCol>
+        </MRow>
+        <MRow>
+            <MCol Cols="6">
+                <MTextField Type="number" Clearable @bind-Value="RequestInput.MinSize" Label="大小从"/>
+            </MCol>
+            <MCol Cols="6">
+                <MTextField Type="number" Clearable @bind-Value="RequestInput.MaxSize" Label="大小到"/>
+            </MCol>
+        </MRow>
+        <MRow>
+            <MCol Cols="12">
+                <MTextField Clearable @bind-Value="RequestInput.Content" Label="内容"/>
+            </MCol>
+        </MRow>
+        <MRow>
+            <MCol Cols="3">
+                <BoolSelect @bind-Value="RequestInput.IsStudioMod" Label="工作室"/>
+            </MCol>
+            <MCol Cols="3">
+                <BoolSelect @bind-Value="RequestInput.IsCharaMod" Label="人物"/>
+            </MCol>
+            <MCol Cols="3">
+                <BoolSelect @bind-Value="RequestInput.IsMapMod" Label="地图"/>
             </MCol>
         </MRow>
     </MCardSubtitle>
@@ -37,6 +62,9 @@
         <MButton OnClick="MoveLocalModsAsync">
             移动模组
         </MButton>
+        <MButton OnClick="@(() => OpenDeleteModal(null))">
+            删除
+        </MButton>
     </MCardActions>
     <MCardText>
         <MDataTable
@@ -44,31 +72,41 @@
             Headers="@Headers"
             Items="@Result.Items"
             Page="@CurrentPage"
+            ItemKey="u => u.Id.ToString()"
+            ShowExpand
             ItemsPerPage="@RequestInput.MaxResultCount"
             OnOptionsUpdate="@GetEntitiesAsync"
             ServerItemsLength="@((int)Result.TotalCount)"
             Loading="IsLoading"
             ResizeMode="DataTableResizeMode.Auto">
-
             <ItemColContent>
 
                 @if (context.Header.Text == "Action")
                 {
-                    <PModal Title="删除模组" Width="500"
-                            OnSave="@(u => DeleteModAsync(context.Item))">
-                        <ActivatorContent Context="act">
-                            <MButton @attributes="@act.Attrs">删除</MButton>
-                        </ActivatorContent>
-                        <ChildContent>
-                            确认删除？
-                        </ChildContent>
-                    </PModal>
+                    <MButton OnClick="@(u => OpenDeleteModal(context.Item))">
+                        删除
+                    </MButton>
                 }
-                else
+                else if (context.Value is not null)
                 {
                     @context.Value
                 }
+                else
+                {
+                    @context.ValueContent
+                }
             </ItemColContent>
+            <ExpandedItemContent>
+                <td colspan="@Headers.Count">
+                    <pre>
+                        @context.Item.Info.Content
+                    </pre>
+                </td>
+            </ExpandedItemContent>
         </MDataTable>
     </MCardText>
 </MCard>
+
+<PModal @bind-Value="_deleteModalVisible" OnSave="DeleteModAsync">
+    确定要删除吗?
+</PModal>

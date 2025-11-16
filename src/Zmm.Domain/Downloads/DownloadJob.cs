@@ -4,7 +4,6 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Volo.Abp.BackgroundJobs;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.EventBus.Local;
@@ -13,7 +12,7 @@ namespace Zmm.Downloads;
 
 public class DownloadJob(
     DownloadManager manager,
-    IOptions<ZmmOptions> options,
+    ZmmTaskManager taskManager,
     ILogger<DownloadJob> logger,
     ILocalEventBus eventBus)
     : AsyncBackgroundJob<DownloadArgs>, ITransientDependency
@@ -35,13 +34,7 @@ public class DownloadJob(
             return;
         }
 
-        var h = ProcessDownloadAsync(task);
-        manager.CurrentTasks.RemoveAll(u => u.IsCompleted || u.IsCanceled || u.IsFaulted);
-        manager.CurrentTasks.Add(h);
-        if (manager.CurrentTasks.Count >= options.Value.MaxThreadCount)
-        {
-            await Task.WhenAny(manager.CurrentTasks);
-        }
+        await taskManager.WaitTaskAsync(ProcessDownloadAsync(task));
     }
 
     protected async Task ProcessDownloadAsync(DownloadTask task)
@@ -99,7 +92,12 @@ public class DownloadJob(
         await eventBus.PublishAsync(new DownloadFinishedEto
         {
             Id = task.Id,
-            StatusCode = statusCode
+            StatusCode = statusCode,
+            Label = task.Label,
+            FileName = task.FileName,
+            FolderPath = task.FolderPath,
+            Uri = task.Uri,
+            Status = task.Status
         });
     }
 }

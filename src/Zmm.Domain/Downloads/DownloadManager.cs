@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Volo.Abp.BackgroundJobs;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Guids;
@@ -25,8 +24,6 @@ public class DownloadManager(
     {
         return DownloadHistories.AsQueryable();
     }
-
-    public List<Task> CurrentTasks { get; } = [];
 
     public async Task<DownloadTask> CreateAsync(Uri link, string folderPath, string fileName, string label)
     {

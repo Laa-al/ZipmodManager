@@ -116,10 +116,7 @@ public partial class RemoteModManagement
 
     protected async Task ResetAsync()
     {
-        RequestInput.Name = null;
-        RequestInput.Identifier = null;
-        RequestInput.Version = null;
-        RequestInput.Author = null;
+        RequestInput.Clear();
         await GetEntitiesAsync(null);
     }
 

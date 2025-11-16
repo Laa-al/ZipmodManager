@@ -10,7 +10,8 @@ using Zmm.Localization;
 
 namespace Zmm.Zipmods;
 
-public class ZipmodLinkAppService : CrudAppService<ZipmodLink, ZipmodLinkDto, Guid, ZipmodLinkRequestInput>, IZipmodLinkAppService
+public class ZipmodLinkAppService : CrudAppService<ZipmodLink, ZipmodLinkDto, Guid, ZipmodLinkRequestInput>,
+    IZipmodLinkAppService
 {
     private readonly IBackgroundJobManager _jobs;
     private readonly ZipmodManager _zipmodManager;
@@ -34,23 +35,7 @@ public class ZipmodLinkAppService : CrudAppService<ZipmodLink, ZipmodLinkDto, Gu
     {
         var query = await ReadOnlyRepository.WithDetailsAsync();
 
-        query = query
-                .WhereIf(!input.Name.IsNullOrEmpty(), u => u.Name!.Contains(input.Name!))
-                .WhereIf(!input.Description.IsNullOrEmpty(), u => u.Description!.Contains(input.Description!))
-                .WhereIf(!input.Size.IsNullOrEmpty(), u => u.Size!.Contains(input.Size!))
-                .WhereIf(input.UploadTimeStrat is not null, u => u.UploadTime >= input.UploadTimeStrat)
-                .WhereIf(input.UploadTimeEnd is not null, u => u.UploadTime <= input.UploadTimeEnd)
-                .WhereIf(input.IsInvalid is not null, u => u.IsInvalid == input.IsInvalid)
-                .WhereIf(!input.Identifier.IsNullOrEmpty(), u => u.Info!.Identifier.Contains(input.Identifier!))
-                .WhereIf(!input.Version.IsNullOrEmpty(), u => u.Info!.Version!.Contains(input.Version!))
-                .WhereIf(!input.Author.IsNullOrEmpty(), u => u.Info!.Author!.Contains(input.Author!))
-                .WhereIf(!input.Game.IsNullOrEmpty(), u => u.Info!.Game!.Contains(input.Game!))
-                .WhereIf(input.IsCharaMod is not null, u => u.Info!.IsCharaMod == input.IsCharaMod)
-                .WhereIf(input.IsStudioMod is not null, u => u.Info!.IsStudioMod == input.IsStudioMod)
-                .WhereIf(input.IsMapMod is not null, u => u.Info!.IsMapMod == input.IsMapMod)
-                .WhereIf(input.UpdateTimeStart is not null, u => u.Info!.UpdateTime >= input.UpdateTimeStart)
-                .WhereIf(input.UpdateTimeEnd is not null, u => u.Info!.UpdateTime <= input.UpdateTimeEnd)
-            ;
+        query = query.Filter(input);
 
         return query;
     }

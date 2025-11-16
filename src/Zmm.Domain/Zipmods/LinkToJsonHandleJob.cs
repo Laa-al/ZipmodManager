@@ -1,30 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Volo.Abp.BackgroundJobs;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Domain.Repositories;
-using Volo.Abp.Uow;
 
 namespace Zmm.Zipmods;
 
 public class LinkToJsonHandleJob(
-    IRepository<ZipmodInfo, Guid> infoRepository,
+    ZipmodManager manager,
     IRepository<ZipmodLink, Guid> repository)
     : AsyncBackgroundJob<LinkToJsonHandleArgs>, ITransientDependency
 {
+    private static JsonSerializerOptions _options = new()
+    {
+        ReferenceHandler = ReferenceHandler.IgnoreCycles
+    };
+
     public override async Task ExecuteAsync(LinkToJsonHandleArgs args)
     {
         if (args.IsExport)
         {
-            var query = await repository.GetQueryableAsync();
+            var query = await repository
+                .WithDetailsAsync(u => u.Info!);
+
             await using var fs = new FileStream(args.Path, FileMode.Create);
             await using var sw = new StreamWriter(fs);
 
-            var list = JsonSerializer.Serialize(query);
-            await sw.WriteAsync(list);
+            var list = query.ToList();
+
+            var str = JsonSerializer.Serialize(list, _options);
+            await sw.WriteAsync(str);
         }
         else
         {
@@ -34,25 +44,9 @@ public class LinkToJsonHandleJob(
             {
                 foreach (var link in list)
                 {
-                    await CreateLinkAsync(link);
+                    await manager.CreateLinkAsync(link);
                 }
             }
         }
-    }
-
-    [UnitOfWork]
-    protected virtual async Task CreateLinkAsync(ZipmodLink link)
-    {
-        if (link.Info is { } i)
-        {
-            var exist = await infoRepository.FirstOrDefaultAsync(u =>
-                u.Identifier == i.Identifier && u.Version == i.Version && u.Author == i.Author);
-            if (exist is not null)
-            {
-                link.Info = exist;
-            }
-        }
-
-        await repository.InsertAsync(link);
     }
 }
