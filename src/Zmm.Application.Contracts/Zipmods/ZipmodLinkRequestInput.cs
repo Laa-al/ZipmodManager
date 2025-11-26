@@ -16,6 +16,7 @@ public class ZipmodLinkRequestInput : ZipmodInfoRequestInput
 
     public bool? IsDownload { get; set; }
     public bool? IsInvalid { get; set; }
+    public bool? IsNoInfo { get; set; }
 
     public override void Clear()
     {
@@ -27,5 +28,6 @@ public class ZipmodLinkRequestInput : ZipmodInfoRequestInput
         UploadTimeEnd = null;
         IsDownload = null;
         IsInvalid = null;
+        IsNoInfo = null;
     }
 }

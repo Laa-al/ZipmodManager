@@ -43,6 +43,14 @@
                 <BoolSelect @bind-Value="RequestInput.IsDownload" Label="已下载"/>
             </MCol>
         </MRow>
+        <MRow>
+            <MCol Cols="3">
+                <BoolSelect @bind-Value="RequestInput.IsNoInfo" Label="无信息"/>
+            </MCol>
+            <MCol Cols="3">
+                <BoolSelect @bind-Value="RequestInput.IsInvalid" Label="非Mod"/>
+            </MCol>
+        </MRow>
     </MCardSubtitle>
     <MCardActions>
         <MButton OnClick="RefreshAsync">

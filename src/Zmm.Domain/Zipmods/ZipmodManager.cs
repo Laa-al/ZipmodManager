@@ -170,6 +170,9 @@ public class ZipmodManager(
         }
 
         var targetFile = await LoadFileFromPathAsync(path);
+
+        if (targetFile.Path == file.Path) return;
+
         var result = file.Info.CompareTo(targetFile.Info);
 
         if (result == 0)

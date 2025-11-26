@@ -33,6 +33,7 @@ public static class QueryExtensions
                 .WhereIf(input.UploadTimeStrat is not null, u => u.UploadTime >= input.UploadTimeStrat)
                 .WhereIf(input.UploadTimeEnd is not null, u => u.UploadTime <= input.UploadTimeEnd)
                 .WhereIf(input.IsInvalid is not null, u => u.IsInvalid == input.IsInvalid)
+                .WhereIf(input.IsNoInfo is not null, u => (u.Info == null) == input.IsNoInfo)
                 .WhereIf(!input.Identifier.IsNullOrEmpty(), u => u.Info!.Identifier.Contains(input.Identifier!))
                 .WhereIf(!input.Version.IsNullOrEmpty(), u => u.Info!.Version!.Contains(input.Version!))
                 .WhereIf(!input.Author.IsNullOrEmpty(), u => u.Info!.Author!.Contains(input.Author!))

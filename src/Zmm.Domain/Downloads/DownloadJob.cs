@@ -77,15 +77,14 @@ public class DownloadJob(
 
             task.Status = DownloadStatus.Downloaded;
         }
+        catch (HttpRequestException e)
+        {
+            HandleError(e);
+            statusCode = e.StatusCode ?? HttpStatusCode.BadRequest;
+        }
         catch (Exception e)
         {
-            task.Status = DownloadStatus.Failed;
-            logger.LogException(e);
-            if (File.Exists(downloadPath))
-            {
-                File.Delete(downloadPath);
-            }
-
+            HandleError(e);
             throw;
         }
 
@@ -99,5 +98,16 @@ public class DownloadJob(
             Uri = task.Uri,
             Status = task.Status
         });
+        return;
+
+        void HandleError(Exception e)
+        {
+            task.Status = DownloadStatus.Failed;
+            logger.LogException(e);
+            if (File.Exists(downloadPath))
+            {
+                File.Delete(downloadPath);
+            }
+        }
     }
 }
