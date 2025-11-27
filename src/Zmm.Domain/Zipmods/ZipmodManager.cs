@@ -24,7 +24,6 @@ public class ZipmodManager(
     IGuidGenerator generator
 ) : DomainService
 {
-    [UnitOfWork]
     public virtual async Task<ZipmodInfo> LoadInfoFromPathAsync(string path)
     {
         using var file = ZipFile.OpenRead(path);
@@ -54,8 +53,19 @@ public class ZipmodManager(
 
             content = sb.ToString();
         }
+        string? game = null;
+
+        foreach (XmlNode node in root.GetElementsByTagName("game"))
+        {
+            if (string.Equals(node.InnerText, "Honey Select 2", StringComparison.OrdinalIgnoreCase))
+            {
+                game = "Honey Select 2";
+                break;
+            }
+        }
 
         FileInfo fileInfo = new(path);
+
         ZipmodInfo res = new(generator.Create())
         {
             Identifier = identifier,
@@ -66,39 +76,11 @@ public class ZipmodManager(
             IsMapMod = file.GetEntry("abdata/map/") is not null,
             FileSize = fileInfo.Length,
             UpdateTime = fileInfo.LastWriteTime,
-            Content = content
+            Content = content,
+            Game = game
         };
 
-
-        foreach (XmlNode node in root.GetElementsByTagName("game"))
-        {
-            if (string.Equals(node.InnerText, "Honey Select 2", StringComparison.OrdinalIgnoreCase))
-            {
-                res.Game = "Honey Select 2";
-                break;
-            }
-        }
-
-        var exist = await infoRepository.FirstOrDefaultAsync(u =>
-            u.Identifier == identifier && u.Version == res.Version && u.Author == res.Author);
-
-        if (exist is not null)
-        {
-            exist.Identifier = res.Identifier;
-            exist.Author = res.Author;
-            exist.Version = res.Version;
-            exist.IsCharaMod = res.IsCharaMod;
-            exist.IsStudioMod = res.IsStudioMod;
-            exist.IsMapMod = res.IsMapMod;
-            exist.FileSize = res.FileSize;
-            exist.UpdateTime = res.UpdateTime;
-            exist.Content = res.Content;
-
-            return exist;
-        }
-
-        await infoRepository.InsertAsync(res);
-        return res;
+        return await CreateOrUpdateInfoAsync(res);
     }
 
     [UnitOfWork]
@@ -122,19 +104,39 @@ public class ZipmodManager(
     }
 
     [UnitOfWork]
+    public virtual async Task<ZipmodInfo> CreateOrUpdateInfoAsync(ZipmodInfo info)
+    {
+        var exist = await infoRepository.FirstOrDefaultAsync(u =>
+            u.Identifier == info.Identifier && u.Version == info.Version && u.Author == info.Author);
+
+        info.Files.Clear();
+        info.Links.Clear();
+        
+        if (exist is null)
+            return await infoRepository.InsertAsync(info);
+
+        exist.Identifier = info.Identifier;
+        exist.Author = info.Author;
+        exist.Version = info.Version;
+        exist.IsCharaMod = info.IsCharaMod;
+        exist.IsStudioMod = info.IsStudioMod;
+        exist.IsMapMod = info.IsMapMod;
+        exist.FileSize = info.FileSize;
+        exist.UpdateTime = info.UpdateTime;
+        exist.Content = info.Content;
+
+        return exist;
+    }
+
+    [UnitOfWork]
     public virtual async Task CreateLinkAsync(ZipmodLink link)
     {
         if (link.Info is not null)
         {
-            var info = await infoRepository.FirstOrDefaultAsync(u =>
-                u.Identifier == link.Info.Identifier && u.Version == link.Info.Version && u.Author == link.Info.Author);
-
-            if (info is not null)
-            {
-                link.Info = info;
-            }
+            var info = await CreateOrUpdateInfoAsync(link.Info);
+            link.Info = null;
+            link.InfoId = info.Id;
         }
-
 
         var entity = await linkRepository.FindAsync(u => u.DownloadUri == link.DownloadUri);
         if (entity is null)
@@ -143,12 +145,10 @@ public class ZipmodManager(
         }
         else
         {
-            entity.IsInvalid = link.IsInvalid;
-            entity.UploadTime = link.UploadTime;
-            entity.Description = link.Description;
             entity.Name = link.Name;
+            entity.Description = link.Description;
             entity.Size = link.Size;
-            entity.Info = link.Info;
+            entity.UploadTime = link.UploadTime;
         }
     }
 

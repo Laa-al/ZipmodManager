@@ -11,11 +11,9 @@ namespace Zmm.Zipmods;
 
 public partial class RemoteModManagement
 {
-    [Inject]
-    protected IZipmodLinkAppService AppService { get; set; } = null!;
+    [Inject] protected IZipmodLinkAppService AppService { get; set; } = null!;
 
-    [Inject]
-    protected IExplorerManager ExplorerManager { get; set; } = null!;
+    [Inject] protected IExplorerManager ExplorerManager { get; set; } = null!;
 
     protected PagedResultDto<ZipmodLinkDto> Result { get; set; } = new();
 
@@ -37,11 +35,14 @@ public partial class RemoteModManagement
 
     protected string RemoteUrl { get; set; } = "https://sideload.betterrepack.com/download/";
 
+    private bool _sideLoaderVisible;
+
     protected async Task LoadRemoteModsAsync()
     {
         try
         {
             await AppService.LoadRemoteModsAsync(RemoteUrl);
+            _sideLoaderVisible = false;
         }
         catch (Exception e)
         {

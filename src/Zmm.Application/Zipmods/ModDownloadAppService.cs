@@ -70,7 +70,7 @@ public class ModDownloadAppService(
         dto.Status = task.Status;
         dto.DownloadId = task.Id;
         dto.DownloadSize = task.CurrentSize;
-        dto.TotalSize = (int?)link?.Info?.FileSize ?? 0;
+        dto.TotalSize = (int)(link?.Info?.FileSize ?? link?.LinkSize ?? 0);
     }
 
     public Task<ModDownloadSummaryDto> GetSummaryAsync()

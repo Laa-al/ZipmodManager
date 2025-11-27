@@ -21,7 +21,7 @@ public partial class App
 #if DEBUG
             .MinimumLevel.Debug()
 #else
-                .MinimumLevel.Information()
+            .MinimumLevel.Information()
 #endif
             .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
             .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)

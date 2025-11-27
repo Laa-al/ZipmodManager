@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore.DependencyInjection;
@@ -9,7 +8,6 @@ using Zmm.Zipmods;
 namespace Zmm.EntityFrameworkCore;
 
 [DependsOn(
-    typeof(AbpBackgroundJobsEntityFrameworkCoreModule),
     typeof(ZmmDomainModule),
     typeof(AbpEntityFrameworkCoreModule)
 )]

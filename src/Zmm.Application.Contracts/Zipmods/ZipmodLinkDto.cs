@@ -15,6 +15,7 @@ public class ZipmodLinkDto : EntityDto<Guid>, IZipmodLink
     public string? Size { get; set; }
 
     public DateTime UploadTime { get; set; }
+    public long LinkSize { get; set; }
 
     public bool IsInvalid { get; set; }
 

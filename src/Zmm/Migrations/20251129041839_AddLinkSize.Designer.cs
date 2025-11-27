@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Volo.Abp.EntityFrameworkCore;
 using Zmm.EntityFrameworkCore;
@@ -11,9 +12,11 @@ using Zmm.EntityFrameworkCore;
 namespace Zmm.Migrations
 {
     [DbContext(typeof(ZmmMigrateDbContext))]
-    partial class ZmmMigrateDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251129041839_AddLinkSize")]
+    partial class AddLinkSize
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

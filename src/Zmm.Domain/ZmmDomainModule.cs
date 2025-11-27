@@ -3,12 +3,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.BackgroundJobs;
 using Volo.Abp.Domain;
 using Volo.Abp.Modularity;
-using Zmm.Downloads;
 
 namespace Zmm;
 
 [DependsOn(
-    typeof(AbpBackgroundJobsDomainModule),
     typeof(AbpBackgroundJobsModule),
     typeof(AbpDddDomainModule),
     typeof(ZmmDomainSharedModule)

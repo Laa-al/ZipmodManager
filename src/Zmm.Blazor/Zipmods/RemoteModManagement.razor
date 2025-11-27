@@ -10,10 +10,24 @@
     <MCardSubtitle>
         <MRow>
             <MCol Cols="6">
-                <MTextField Clearable @bind-Value="RequestInput.Name" Label="网址"/>
+                <MTextField Clearable @bind-Value="RequestInput.Name" Label="文件名"/>
             </MCol>
             <MCol Cols="6">
-                <MTextField Clearable @bind-Value="RequestInput.Identifier" Label="名称"/>
+                <MTextField Clearable @bind-Value="RequestInput.Identifier" Label="GUID"/>
+            </MCol>
+        </MRow>
+        <MRow>
+            <MCol Cols="3">
+                <MTextField Type="number" Clearable @bind-Value="RequestInput.LinkMinSize" Label="链接大小从"/>
+            </MCol>
+            <MCol Cols="3">
+                <MTextField Type="number" Clearable @bind-Value="RequestInput.LinkMaxSize" Label="链接大小到"/>
+            </MCol>
+            <MCol Cols="3">
+                <MTextField Type="number" Clearable @bind-Value="RequestInput.MinSize" Label="大小从"/>
+            </MCol>
+            <MCol Cols="3">
+                <MTextField Type="number" Clearable @bind-Value="RequestInput.MaxSize" Label="大小到"/>
             </MCol>
         </MRow>
         <MRow>
@@ -60,6 +74,7 @@
             重置
         </MButton>
         <PModal Persistent
+                @bind-Value="_sideLoaderVisible"
                 Title="加载SideLoader"
                 Width="500"
                 OnSave="LoadRemoteModsAsync">

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Xml;
 using Microsoft.Extensions.Logging;
 using Volo.Abp.BackgroundJobs;
 using Volo.Abp.DependencyInjection;
-using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Guids;
 using static System.DateTime;
 
@@ -108,5 +108,7 @@ public class SideLoaderModScrapeJob(
                 Logger.LogError(e, "analyze failed. uri: {uri}. html: {html}", uri, html);
             }
         }
+
+        Logger.LogInformation("Sideloader mod Scrape finished!");
     }
 }

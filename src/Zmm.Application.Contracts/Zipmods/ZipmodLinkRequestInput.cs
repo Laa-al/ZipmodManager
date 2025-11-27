@@ -13,6 +13,8 @@ public class ZipmodLinkRequestInput : ZipmodInfoRequestInput
 
     public DateTime? UploadTimeStrat { get; set; }
     public DateTime? UploadTimeEnd { get; set; }
+    public int? LinkMaxSize { get; set; }
+    public int? LinkMinSize { get; set; }
 
     public bool? IsDownload { get; set; }
     public bool? IsInvalid { get; set; }

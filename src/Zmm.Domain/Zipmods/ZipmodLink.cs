@@ -15,17 +15,36 @@ public class ZipmodLink : AggregateRoot<Guid>, IZipmodLink
         DownloadUri = downloadUri;
     }
 
-    [MaxLength(256)]
-    public Uri DownloadUri { get; set; } = null!;
+    [MaxLength(256)] public Uri DownloadUri { get; set; } = null!;
 
-    [MaxLength(128)]
-    public string? Name { get; set; }
+    [MaxLength(128)] public string? Name { get; set; }
 
-    [MaxLength(512)]
-    public string? Description { get; set; }
+    [MaxLength(512)] public string? Description { get; set; }
 
     [MaxLength(64)]
-    public string? Size { get; set; }
+    public string? Size
+    {
+        get => field;
+        set
+        {
+            field = value;
+            if (field.IsNullOrWhiteSpace()) return;
+            var v = field[..^1];
+            var c = field[^1..];
+            if (decimal.TryParse(v, out var d))
+            {
+                LinkSize = c.ToLower() switch
+                {
+                    "k" => (long)(d * 1024),
+                    "m" => (long)(d * 1024 * 1024),
+                    "g" => (long)(d * 1024 * 1024 * 1024),
+                    _ => 0
+                };
+            }
+        }
+    }
+
+    public long LinkSize { get; set; }
 
     public DateTime UploadTime { get; set; }
 

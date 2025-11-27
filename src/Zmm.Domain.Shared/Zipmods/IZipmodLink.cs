@@ -13,6 +13,7 @@ public interface IZipmodLink
      string? Size { get; set; }
 
      DateTime UploadTime { get; set; }
+     long LinkSize { get; set; }
 
      bool IsInvalid { get; set; }
 }

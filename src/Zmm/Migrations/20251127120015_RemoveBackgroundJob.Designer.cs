@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Volo.Abp.EntityFrameworkCore;
 using Zmm.EntityFrameworkCore;
@@ -11,9 +12,11 @@ using Zmm.EntityFrameworkCore;
 namespace Zmm.Migrations
 {
     [DbContext(typeof(ZmmMigrateDbContext))]
-    partial class ZmmMigrateDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251127120015_RemoveBackgroundJob")]
+    partial class RemoveBackgroundJob
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -140,9 +143,6 @@ namespace Zmm.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("IsInvalid")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<long>("LinkSize")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")

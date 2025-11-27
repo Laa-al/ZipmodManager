@@ -1,4 +1,4 @@
-using Volo.Abp.BackgroundJobs;
+
 using Volo.Abp.Modularity;
 using Volo.Abp.Localization;
 using Zmm.Localization;
@@ -11,7 +11,6 @@ using Volo.Abp.VirtualFileSystem;
 namespace Zmm;
 
 [DependsOn(
-    typeof(AbpBackgroundJobsDomainSharedModule),
     typeof(AbpValidationModule),
     typeof(AbpDddDomainSharedModule)
 )]
